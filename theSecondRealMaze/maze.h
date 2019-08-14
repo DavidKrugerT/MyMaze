@@ -4,6 +4,8 @@
 #include <stack>
 #include <cstdlib>
 #include <ctime>
+#include <algorithm>
+#include <fstream>
 
 enum Object
 {
@@ -22,8 +24,7 @@ struct Node
 class Maze
 {
 public:
-	Maze(const int x,const int y);
-	~Maze();
+	Maze(const int x, const int y);
 	void generate(int startX, int startY);
 	void print();
 	void solve(int startX, int startY, int endX, int endY);

@@ -20,12 +20,6 @@ Maze::Maze(const int x, const int y)
 	}
 }
 
-
-Maze::~Maze()
-{
-	
-}
-
 void Maze::generate(int startX, int startY)
 {
 	if (outOfBounds(startX, startY))
@@ -36,65 +30,94 @@ void Maze::generate(int startX, int startY)
 	matrix[startX][startY].visited = true;
 	matrix[startX][startY].object = PATH;
 	stack.push(matrix[startX][startY]);
+	std::srand(unsigned(std::time(0)));
+	std::vector<int> randomDir{1,2,3,4};
+
 	while (!stack.empty())
 	{
+		
+		Node currentNode = matrix[stack.top().x][stack.top().y];
 
-		Node currentNode = matrix[stack.top().x][stack.top().y];		
-		Node* leftNeighbourPointer = getLeftNeighbour(currentNode.x, currentNode.y);
-		if (leftNeighbourPointer != nullptr)
+		std::random_shuffle(randomDir.begin(), randomDir.end());
+
+		bool found = false;
+
+		for (int i = 0; i < randomDir.size() && !found; i++)
 		{
-			Node leftNeighbour = *leftNeighbourPointer;
-			if (isValidNeighbour(leftNeighbour, currentNode))
-			{
-				matrix[leftNeighbour.x][leftNeighbour.y].visited = true;
-				matrix[leftNeighbour.x][leftNeighbour.y].object = PATH;
-				stack.push(leftNeighbour);
-				continue;
+
+			switch (randomDir[i])
+				{
+				case 1:
+				{
+					Node * leftNeighbourPointer = getLeftNeighbour(currentNode.x, currentNode.y);
+					if (leftNeighbourPointer != nullptr)
+					{
+						Node leftNeighbour = *leftNeighbourPointer;
+						if (isValidNeighbour(leftNeighbour, currentNode))
+						{
+							matrix[leftNeighbour.x][leftNeighbour.y].visited = true;
+							matrix[leftNeighbour.x][leftNeighbour.y].object = PATH;
+							stack.push(leftNeighbour);
+							found = true;
+						}
+					}
+					break;
+				}
+				case 2:
+				{
+					Node * rightNeighbourPointer = getRightNeighbour(currentNode.x, currentNode.y);
+					if (rightNeighbourPointer != nullptr)
+					{
+						Node rightNeighbour = *rightNeighbourPointer;
+						if (isValidNeighbour(rightNeighbour, currentNode))
+						{
+							matrix[rightNeighbour.x][rightNeighbour.y].visited = true;
+							matrix[rightNeighbour.x][rightNeighbour.y].object = PATH;
+							stack.push(rightNeighbour);
+							found = true;
+						}
+					}
+					break;
+				}
+				case 3:
+				{
+					Node * topNeighbourPointer = getTopNeighbour(currentNode.x, currentNode.y);
+					if (topNeighbourPointer != nullptr)
+					{
+						Node topNeighbour = *topNeighbourPointer;
+						if (isValidNeighbour(topNeighbour, currentNode))
+						{
+							matrix[topNeighbour.x][topNeighbour.y].visited = true;
+							matrix[topNeighbour.x][topNeighbour.y].object = PATH;
+							stack.push(topNeighbour);
+							found = true;
+						}
+					}
+					break;
+				}
+				case 4:
+				{
+					Node * botNeighbourPointer = getBotNeighbour(currentNode.x, currentNode.y);
+					if (botNeighbourPointer != nullptr)
+					{
+						Node botNeighbour = *botNeighbourPointer;
+						if (isValidNeighbour(botNeighbour, currentNode))
+						{
+							matrix[botNeighbour.x][botNeighbour.y].visited = true;
+							matrix[botNeighbour.x][botNeighbour.y].object = PATH;
+							stack.push(botNeighbour);
+							found = true;
+						}
+					}	
+					break;
+				}
 			}
 		}
-		
-		Node* rightNeighbourPointer = getRightNeighbour(currentNode.x, currentNode.y);
-		if (rightNeighbourPointer != nullptr)
+		if (!found) 
 		{
-			Node rightNeighbour = *rightNeighbourPointer;
-			if (isValidNeighbour(rightNeighbour, currentNode))
-			{
-				matrix[rightNeighbour.x][rightNeighbour.y].visited = true;
-				matrix[rightNeighbour.x][rightNeighbour.y].object = PATH;
-				stack.push(rightNeighbour);
-				continue;
-			}
+			stack.pop();
 		}
-		
-		
-		Node* topNeighbourPointer = getTopNeighbour(currentNode.x, currentNode.y);
-		if (topNeighbourPointer != nullptr)
-		{
-			Node topNeighbour = *topNeighbourPointer;
-			if (isValidNeighbour(topNeighbour, currentNode))
-			{
-				matrix[topNeighbour.x][topNeighbour.y].visited = true;
-				matrix[topNeighbour.x][topNeighbour.y].object = PATH;
-				stack.push(topNeighbour);
-				continue;
-			}
-		}
-		
-	
-		Node* botNeighbourPointer = getBotNeighbour(currentNode.x, currentNode.y);
-		if (botNeighbourPointer != nullptr)
-		{
-			Node botNeighbour = *botNeighbourPointer;
-			if (isValidNeighbour(botNeighbour, currentNode))
-			{
-				matrix[botNeighbour.x][botNeighbour.y].visited = true;
-				matrix[botNeighbour.x][botNeighbour.y].object = PATH;
-				stack.push(botNeighbour);
-				continue;
-			}
-		}
-		stack.pop();
-	}
+	}	
 }
 
 void Maze::print()
@@ -105,15 +128,15 @@ void Maze::print()
 		{
 			if (matrix[column][row].object == WALL)
 			{
-				std::cout << "#";
+				std::cout << " # ";
 			}
 			else if (matrix[column][row].object == PATH)
 			{
-				std::cout << "*";
+				std::cout << " # ";
 			}
 			else
 			{
-				std::cout << "o";
+				std::cout << " O ";
 			}
 		}
 		std::cout << std::endl;
@@ -168,7 +191,6 @@ void Maze::solve(int startX, int startY, int endX, int endY)
 		{
 			matrix[path->x][path->y].visited = true;
 			matrix[path->x][path->y].object = SOLVE;
-			std::cout << path->x << " " << path->y << " "<<std::endl;
 			stack.push(matrix[path->x][path->y]);
 		}
 		else
@@ -310,41 +332,63 @@ Node * Maze::getTopNeighbour(const int x, const int y)
 
 Node * Maze::findPath(const int x, const int y)
 {
-	//check top
-	if (!outOfBounds(x, y + 1))
-	{
-		if (!matrix[x][y + 1].visited && matrix[x][y + 1].object == PATH)
-		{
-			return &matrix[x][y + 1];
-		}
-	}
+	std::srand(unsigned(std::time(0)));
+	std::vector<int> randomDir = { 1,2,3,4 };
+	std::random_shuffle(randomDir.begin(), randomDir.end());
 
-	//check right
-	if (!outOfBounds(x + 1, y))
+	for (int i = 0; i < randomDir.size(); i++)
 	{
-		if (!matrix[x + 1][y].visited && matrix[x + 1][y].object == PATH)
+		switch (randomDir[i])
 		{
-			return &matrix[x + 1][y];
+			case 1:
+			{
+				//check top
+				if (!outOfBounds(x, y + 1))
+				{
+					if (!matrix[x][y + 1].visited && matrix[x][y + 1].object == PATH)
+					{
+						return &matrix[x][y + 1];
+					}
+				}
+				break;
+			}
+			case 2:
+			{
+				//check right
+				if (!outOfBounds(x + 1, y))
+				{
+					if (!matrix[x + 1][y].visited && matrix[x + 1][y].object == PATH)
+					{
+						return &matrix[x + 1][y];
+					}
+				}
+				break;
+			}
+			case 3:
+			{
+				//check bot
+				if (!outOfBounds(x, y - 1))
+				{
+					if (!matrix[x][y - 1].visited && matrix[x][y - 1].object == PATH)
+					{
+						return &matrix[x][y - 1];
+					}
+				}
+				break;
+			}
+			case 4:
+			{
+				//check left
+				if (!outOfBounds(x - 1, y))
+				{
+					if (!matrix[x - 1][y].visited && matrix[x - 1][y].object == PATH)
+					{
+						return &matrix[x - 1][y];
+					}
+				}
+				break;
+			}
 		}
 	}
-
-	//check bot
-	if (!outOfBounds(x, y - 1))
-	{
-		if (!matrix[x][y - 1].visited && matrix[x][y - 1].object == PATH)
-		{
-			return &matrix[x][y - 1];
-		}
-	}
-
-	//check left
-	if (!outOfBounds(x - 1, y))
-	{
-		if (!matrix[x - 1][y].visited && matrix[x - 1][y].object == PATH)
-		{
-			return &matrix[x - 1][y];
-		}
-	}
-	
 	return nullptr;
 }
