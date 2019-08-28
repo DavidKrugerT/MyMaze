@@ -24,9 +24,14 @@ struct Node
 class Maze
 {
 public:
+	//contructor
 	Maze(const int x, const int y);
+	//maze generator
 	void generate(int startX, int startY);
+	//maze printer
+	void printSolved(std::ofstream& file);
 	void print();
+	//maze solver
 	void solve(int startX, int startY, int endX, int endY);
 
 private: 
@@ -34,6 +39,7 @@ private:
 	int width;
 	int height;
 	bool outOfBounds(int x, int y);
+	//
 	bool isValidNeighbour(Node node, Node prevNode);
 	std::stack<Node> stack;
 	Node* getLeftNeighbour(const int x, const int y);

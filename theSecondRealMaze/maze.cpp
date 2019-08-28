@@ -12,7 +12,7 @@ Maze::Maze(const int x, const int y)
 		matrix[column].resize(y);   //vi har y antal columner
 		for (int row = 0; row < y; row++)   // vi loopar igenom varje rad för en column sen tar vi nästa column.
 		{
-			matrix[column][row].object = WALL;   //
+			matrix[column][row].object = WALL;
 			matrix[column][row].visited = false;
 			matrix[column][row].x = column;
 			matrix[column][row].y = row;
@@ -22,6 +22,7 @@ Maze::Maze(const int x, const int y)
 
 void Maze::generate(int startX, int startY)
 {
+	
 	if (outOfBounds(startX, startY))
 	{
 		startX = 0;
@@ -120,19 +121,48 @@ void Maze::generate(int startX, int startY)
 	}	
 }
 
-void Maze::print()
+void Maze::printSolved(std::ofstream& file)
 {
+	
 	for (int column = 0; column < width; column++)
 	{
 		for (int row = 0; row < height; row++)
 		{
 			if (matrix[column][row].object == WALL)
 			{
-				std::cout << " # ";
+				std::cout << " * ";
+				file << " * ";
 			}
 			else if (matrix[column][row].object == PATH)
 			{
-				std::cout << " # ";
+				std::cout << " X ";
+				file << " X ";
+			}
+			else
+			{
+				std::cout << " O ";
+				file << " O ";
+			}
+		}
+		std::cout << std::endl;
+		file << std::endl;
+	}
+}
+
+void Maze::print()
+{
+
+	for (int column = 0; column < width; column++)
+	{
+		for (int row = 0; row < height; row++)
+		{
+			if (matrix[column][row].object == WALL)
+			{
+				std::cout << " * ";
+			}
+			else if (matrix[column][row].object == PATH)
+			{
+				std::cout << " X ";
 			}
 			else
 			{
@@ -140,6 +170,7 @@ void Maze::print()
 			}
 		}
 		std::cout << std::endl;
+		
 	}
 }
 
@@ -222,7 +253,7 @@ bool Maze::outOfBounds(int x, int y)
 	return false;
 }
 
-//om getNeighbour är en valid granne lägg till annars gå vidare.
+//om getNeighbour är en valid granne lägg till annars gå vidare. Ser så att nästa getneighbour inte har visited neighbours eller är visisted.
 bool Maze::isValidNeighbour(Node node, Node prevNode)
 {
 
@@ -333,7 +364,7 @@ Node * Maze::getTopNeighbour(const int x, const int y)
 Node * Maze::findPath(const int x, const int y)
 {
 	std::srand(unsigned(std::time(0)));
-	std::vector<int> randomDir = { 1,2,3,4 };
+	std::vector<int> randomDir = {1, 2, 3, 4};
 	std::random_shuffle(randomDir.begin(), randomDir.end());
 
 	for (int i = 0; i < randomDir.size(); i++)
